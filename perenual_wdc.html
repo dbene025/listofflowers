@@ -31,7 +31,12 @@
         function myConnector() {
             tableau.makeConnector();
 
-            this.getSchema = function (schemaCallback) {
+            this.init = function(initCallback) {
+                tableau.authType = tableau.authTypeEnum.none;
+                initCallback();
+            };
+
+            this.getSchema = function(schemaCallback) {
                 const cols = [
                     { id: "id", dataType: tableau.dataTypeEnum.int },
                     { id: "common_name", dataType: tableau.dataTypeEnum.string },
@@ -49,9 +54,9 @@
                 schemaCallback([tableSchema]);
             };
 
-            this.getData = function (table, doneCallback) {
+            this.getData = function(table, doneCallback) {
                 const apiKey = tableau.password;
-                getDataFromAPI(apiKey, function (data) {
+                getDataFromAPI(apiKey, function(data) {
                     const tableData = data.map(plant => ({
                         id: plant.id,
                         common_name: plant.common_name,
@@ -69,8 +74,8 @@
 
         tableau.registerConnector(myConnector);
 
-        document.addEventListener("DOMContentLoaded", function () {
-            document.getElementById("submitButton").addEventListener("click", function () {
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("submitButton").addEventListener("click", function() {
                 tableau.connectionName = "Perenual Plant Data";
                 tableau.password = document.getElementById("apiKey").value;
                 tableau.submit();
@@ -85,3 +90,4 @@
     <button id="submitButton">Get Data</button>
 </body>
 </html>
+
