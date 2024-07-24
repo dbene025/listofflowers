@@ -28,15 +28,15 @@
             fetchPage();
         }
 
-        function myConnector() {
-            tableau.makeConnector();
+        tableau.extensions.initializeAsync().then(() => {
+            const myConnector = tableau.makeConnector();
 
-            this.init = function(initCallback) {
+            myConnector.init = function(initCallback) {
                 tableau.authType = tableau.authTypeEnum.none;
                 initCallback();
             };
 
-            this.getSchema = function(schemaCallback) {
+            myConnector.getSchema = function(schemaCallback) {
                 const cols = [
                     { id: "id", dataType: tableau.dataTypeEnum.int },
                     { id: "common_name", dataType: tableau.dataTypeEnum.string },
@@ -54,7 +54,7 @@
                 schemaCallback([tableSchema]);
             };
 
-            this.getData = function(table, doneCallback) {
+            myConnector.getData = function(table, doneCallback) {
                 const apiKey = tableau.password;
                 getDataFromAPI(apiKey, function(data) {
                     const tableData = data.map(plant => ({
@@ -70,9 +70,9 @@
                     doneCallback();
                 });
             };
-        }
 
-        tableau.registerConnector(myConnector);
+            tableau.registerConnector(myConnector);
+        });
 
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("submitButton").addEventListener("click", function() {
@@ -90,4 +90,3 @@
     <button id="submitButton">Get Data</button>
 </body>
 </html>
-
